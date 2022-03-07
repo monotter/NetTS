@@ -10,6 +10,7 @@
   },
   "keywords": [],
   "author": "",
+  "homepage": "https://github.com/monotter/NetTS",
   "license": "ISC",
   "types": "out/index.d.ts",
   "files": [
