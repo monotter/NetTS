@@ -39,7 +39,7 @@ To send data on server to specific player, you have to specify `_player` propert
 
 ```ts
 // receiver
-net.addListener('random-event-name', ({ property1, property2, _player }) => {
+net.addRemoteListener('random-event-name', ({ property1, property2, _player }) => {
     print(`b: ${a}, [d,e,f]: ${c} `)
 })
 
