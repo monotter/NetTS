@@ -108,7 +108,7 @@ export default class Net {
             }
             if (status === 'ok') {
                 ;['BindableEvent', 'RemoteEvent', 'BindableFunction', 'RemoteFunction'].forEach((w: string) => {
-                    this.Interacts[w as 'RemoteEvent'] = new Instance(w as 'RemoteEvent', eventFolder)
+                    this.Interacts[w as 'RemoteEvent'] = eventFolder!.FindFirstChildOfClass(w as 'RemoteEvent')
                     this.clientListen(this.Interacts as Required<Events>, w as 'RemoteEvent')
                 })
             } else if (status === 'netfolderclient') {
