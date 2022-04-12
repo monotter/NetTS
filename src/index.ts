@@ -31,7 +31,6 @@ export default class Net {
                 eventFolder.Name = this.eventName
                 eventFolder.SetAttribute('type', 'Server')
             }
-            wait()
             ;['BindableEvent', 'RemoteEvent', 'BindableFunction', 'RemoteFunction'].forEach((w: string) => {
                 if (eventFolder.FindFirstChildOfClass(w as keyof Instances)) {
                     this.Interacts[w as 'RemoteEvent'] = eventFolder.FindFirstChildOfClass(w as 'RemoteEvent') as RemoteEvent
