@@ -39,6 +39,8 @@ local net = Net.new(
 -- default Container: ReplicatedStorage
 ```
 
+Compiled file can be found in [out/src](github.com/monotter/NetTS/out/index.lua)
+
 ## Simplest Import
 ```ts
 import Net from '@rbxts/net-ts'
