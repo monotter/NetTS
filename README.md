@@ -39,7 +39,7 @@ local net = Net.new(
 -- default Container: ReplicatedStorage
 ```
 
-Compiled file can be found in [out/src](github.com/monotter/NetTS/out/index.lua)
+Compiled file can be found in [out/src](out/index.lua)
 
 ## Simplest Import
 ```ts
