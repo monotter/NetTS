@@ -10,7 +10,7 @@ You can use with both RobloxTS and Plain LuaU
 npm install @rbxts/net-ts
 ```
 
-## Top Level Import
+## Import
 ```ts
 import Net from '@rbxts/net-ts'
 const net = new Net()
@@ -23,7 +23,6 @@ local Net = require(game.ReplicatedStorage.Net).default
 local net = Net.new()
 ```
 
-Compiled file can be found in [out/src](out/index.lua)
 ## Events Usage
 
 ### Server -> Client
@@ -32,9 +31,9 @@ To send data on Server to specific player, you have to specify `_player` propert
 
 **Client**
 ```ts
-net.addListener('random-event-name', ({ property1, property2 }, true) => {
+net.addListener('random-event-name', ({ property1, property2 }) => {
     print(`First param: ${property1}, Second param: ${property2} `)
-})
+}, true)
 ```
 
 **Server**
