@@ -19,6 +19,7 @@ export default class Net {
     private Listeners: Map<string | number, { remote: boolean, listener: listener }[]>
     private ReturnWaiters: Map<string | number, { resolved: boolean, value?: any }>
     private LastConnections: RBXScriptConnection[]
+    private EventWorkspace: string
     public reconnect() {
         this.LastConnections.forEach((connection) => connection.Disconnect())
         this.LastConnections.clear()
@@ -26,10 +27,12 @@ export default class Net {
         if (IsServer) {
             this.LastConnections.push(
                 this.RemoteEvent.OnServerEvent.Connect((player, ...args: unknown[]) => {
-                    const key = args[0] as string
+                    const EventWorkspace = args[0] as string
+                    if (EventWorkspace !== this.EventWorkspace) { return }
+                    const key = args[1] as string
                     if (key === RETURN_PREFIX) {
-                        const UUID = args[1] as string
-                        const value = args[2] as any
+                        const UUID = args[2] as string
+                        const value = args[3] as any
                         const waiter = this.ReturnWaiters.get(UUID)
                         if (!waiter) { return }
                         if (waiter.resolved) { return }
@@ -37,7 +40,7 @@ export default class Net {
                         waiter.value = value
                         return
                     }
-                    const options = (args[1] || {}) as options
+                    const options = (args[2] || {}) as options
                     options._player = player
                     const listeners = this.Listeners.get(key)
                     if (!listeners) { return }
@@ -51,7 +54,7 @@ export default class Net {
                             if (returned) { return }
                             if (value) { returned = true }
                             if (!uuid) { return }
-                            this.RemoteEvent!.FireClient(player, RETURN_PREFIX, uuid, value)
+                            this.RemoteEvent!.FireClient(player, this.EventWorkspace, RETURN_PREFIX, uuid, value)
                         })
                     })
                 })
@@ -59,10 +62,12 @@ export default class Net {
         } else {
             this.LastConnections.push(
                 this.RemoteEvent.OnClientEvent.Connect((...args: unknown[]) => {
-                    const key = args[0] as string
+                    const EventWorkspace = args[0] as string
+                    if (EventWorkspace !== this.EventWorkspace) { return }
+                    const key = args[1] as string
                     if (key === RETURN_PREFIX) {
-                        const UUID = args[1] as string
-                        const value = args[2] as any
+                        const UUID = args[2] as string
+                        const value = args[3] as any
                         const waiter = this.ReturnWaiters.get(UUID)
                         if (!waiter) { return }
                         if (waiter.resolved) { return }
@@ -70,7 +75,7 @@ export default class Net {
                         waiter.value = value
                         return
                     }
-                    const options = (args[1] || {}) as options
+                    const options = (args[2] || {}) as options
                     const listeners = this.Listeners.get(key)
                     if (!listeners) { return }
                     let returned = false
@@ -84,7 +89,7 @@ export default class Net {
                             if (returned) { return }
                             if (value) { returned = true }
                             if (!uuid) { return }
-                            this.RemoteEvent!.FireServer(RETURN_PREFIX, uuid, value)
+                            this.RemoteEvent!.FireServer(this.EventWorkspace, RETURN_PREFIX, uuid, value)
                         })
                     })
                 })
@@ -92,10 +97,12 @@ export default class Net {
         }
         this.LastConnections.push(
             this.BindableEvent.Event.Connect((...args: unknown[]) => {
-                const key = args[0] as string
+                const EventWorkspace = args[0] as string
+                if (EventWorkspace !== this.EventWorkspace) { return }
+                const key = args[1] as string
                 if (key === RETURN_PREFIX) {
-                    const UUID = args[1] as string
-                    const value = args[2] as any
+                    const UUID = args[2] as string
+                    const value = args[3] as any
                     const waiter = this.ReturnWaiters.get(UUID)
                     if (!waiter) { return }
                     if (waiter.resolved) { return }
@@ -103,7 +110,7 @@ export default class Net {
                     waiter.value = value
                     return
                 }
-                const options = (args[1] || {}) as options
+                const options = (args[2] || {}) as options
                 const listeners = this.Listeners.get(key)
                 if (!listeners) { return }
                 let returned = false
@@ -116,7 +123,7 @@ export default class Net {
                         if (returned) { return }
                         if (value) { returned = true }
                         if (!uuid) { return }
-                        this.BindableEvent!.Fire(RETURN_PREFIX, uuid, value)
+                        this.BindableEvent!.Fire(this.EventWorkspace, RETURN_PREFIX, uuid, value)
                     })
                 })
             })
@@ -124,7 +131,8 @@ export default class Net {
     }
 
 
-    constructor() {
+    constructor(EventWorkspace: string = 'Main') {
+        this.EventWorkspace = EventWorkspace
         this.LastConnections = []
         this.Listeners = new Map()
         this.ReturnWaiters = new Map()
@@ -201,16 +209,16 @@ export default class Net {
             while (!this.RemoteEvent) { task.wait() }
             if (IsServer) {
                 if (options._player) {
-                    this.RemoteEvent.FireClient(options._player, key, options)
+                    this.RemoteEvent.FireClient(options._player, this.EventWorkspace, key, options)
                 } else {
-                    this.RemoteEvent.FireAllClients(key, options)
+                    this.RemoteEvent.FireAllClients(this.EventWorkspace, key, options)
                 }
             } else {
-                this.RemoteEvent.FireServer(key, options)
+                this.RemoteEvent.FireServer(this.EventWorkspace, key, options)
             }
         } else {
             while (!this.BindableEvent) { task.wait() }
-            this.BindableEvent.Fire(key, options)
+            this.BindableEvent.Fire(this.EventWorkspace, key, options)
         }
 
 
