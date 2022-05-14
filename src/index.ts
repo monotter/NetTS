@@ -1,5 +1,5 @@
 interface options { [key: string | number]: any, _player?: Player }
-type listener = (options?: options) => any
+type listener = (options?: any) => any
 
 
 const ReplicatedStorage = game.GetService('ReplicatedStorage')
@@ -10,7 +10,6 @@ const RunService = game.GetService('RunService')
 const IsServer = RunService.IsServer()
 const EVENT_NAME = 'NetTS_Connection'
 const RETURN_PREFIX = '$NETTS_RETURN$'
-const GLOBALS = _G as Record<string | number, any>
 
 export default class Net {
     private RemoteEvent: RemoteEvent | undefined
