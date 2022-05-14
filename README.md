@@ -13,41 +13,17 @@ npm install @rbxts/net-ts
 ## Top Level Import
 ```ts
 import Net from '@rbxts/net-ts'
-                 
-const net = new Net(
-    'Character', // Event Workspace
-	'ExcellentTech', // Package Workspace
-	game.GetService("ReplicatedStorage") // Package Container
-)
-// default Event Workspace: "Main"
-// default Package Workspace: "__Net__Workspace__"
-// default Container: ReplicatedStorage
+const net = new Net()
 ```
 
 ### Roblox LuaU
 
 ```lua
 local Net = require(game.ReplicatedStorage.Net).default
---                  Event Workspace, Package Workspace, Package Container
-local net = Net.new(
-    "Character", -- Event Workspace
-    "ExcellentTech", -- Package Workspace
-    game.ReplicatedStorage -- Package Container
-)
--- default Event Workspace: "Main"
--- default Package Workspace: "__Net__Workspace__"
--- default Container: ReplicatedStorage
+local net = Net.new()
 ```
 
 Compiled file can be found in [out/src](out/index.lua)
-
-## Simplest Import
-```ts
-import Net from '@rbxts/net-ts'
-
-const net = new Net('Character')
-```
-
 ## Events Usage
 
 ### Server -> Client
@@ -56,14 +32,14 @@ To send data on Server to specific player, you have to specify `_player` propert
 
 **Client**
 ```ts
-net.addRemoteListener('random-event-name', ({ property1, property2, _player }) => {
+net.addListener('random-event-name', ({ property1, property2 }, true) => {
     print(`First param: ${property1}, Second param: ${property2} `)
 })
 ```
 
 **Server**
 ```ts
-net.emitRemote('random-event-name', { property1: 'example', property2: game.GetService("Workspace"), _player: game.GetService("Players").FindFirstChild("Monotter") as Player })
+net.emit('random-event-name', { property1: 'example', property2: game.GetService("Workspace"), _player: game.GetService("Players").FindFirstChild("Monotter") as Player }, true)
 ```
 ---
 ### Server -> Clients
@@ -72,14 +48,14 @@ if you do not specify `_player` it will automatically call `FireAllClients`.
 
 **Client**
 ```ts
-net.addRemoteListener('broadcast', ({ property1, property2 }: { property1: string, property2: Instance }) => {
+net.addListener('broadcast', ({ property1, property2 }: { property1: string, property2: Instance }) => {
     print(property2, property1)
-})
+}, true)
 ```
 
 **Server**
 ```ts
-net.emitRemote('broadcast', { property1: 'example', property2: game.GetService("Workspace") })
+net.emit('broadcast', { property1: 'example', property2: game.GetService("Workspace") }, true)
 ```
 
 ---
@@ -89,14 +65,14 @@ if you do not specify `_player` it will automatically call `FireAllClients`.
 
 **Client**
 ```ts
-net.addRemoteListener('kick-itself', ({ reason, _player }: { reason: string, _player: Player }) => {
+net.addListener('kick-itself', ({ reason, _player }: { reason: string, _player: Player }) => {
     _player.Kick(reason)
-})
+}, true)
 ```
 
 **Server**
 ```ts
-net.emitRemote('kick-itself', { reason: 'uwu' })
+net.emit('kick-itself', { reason: 'uwu' })
 ```
 ---
 ### Server -> Server, Client -> Client
@@ -115,58 +91,34 @@ net.emit('randomEvent', { a: 'b', c: ['d', 'e', 'f'] })
 ---
 ## Function Usage
 
-Currently `Function Usage` only supports one receiver per `event workspace`.
----
-### Client <-> Client, Server <-> Server
-
-**Client <-> Client or Server <-> Server**
+> `Function Usage` only returns value of first returned listener.
+##### Client <-> Client, Server <-> Server
+```ts
+// Sender
+const result = net.emit('add', { num1: 20, num2: 11 }, false, true) // -> To making it function, simply add true at last parameter
+print(result) // -> Result will be printed. ;)
+```
 ```ts
 // Receiver
 net.addListener('add', ({ num1, num2 }: { num1: number, num2: number }) => {
     return num1 + num2 // -> now we can use return
-}, true) // -> To making it function, simply add true at last parameter
-```
-**Client <-> Client or Server <-> Server**
-```ts
-// Sender
-const result = net.emit('add', { num1: 20, num2: 11 }, true) // -> Same stuff goes here!
-print(result) // -> Result will be printed. ;)
+})
 ```
 ---
-### Server <-> Client
+### Server -> Client
 
-To Server to Client on `Function Usage` you must specify `_player`. (Since there can be only 1 return there must be only 1 Client)
 
-**Server <-> Client**
+**Server -> Client**
 ```ts
 // Receiver
-net.addRemoteListener('multiply', ({ num1, num2 }: { num1: number, num2: number }) => {
+net.addListener('multiply', ({ num1, num2 }: { num1: number, num2: number }) => {
     return num1 * num2
 }, true)
 ```
-**Server <-> Client**
 ```ts
 // Sender
-const result = net.emitRemote('multiply', { num1: 2, num2: 5, _player: game.Players.Monotter }, true)
+const result = net.emit('multiply', { num1: 2, num2: 5, _player: game.Players.Monotter }, true, true)
 print(result)
 ```
----
-### Client <-> Server
-
-**Client <-> Server**
-```ts
-// Receiver
-net.addRemoteListener('multiply', ({ num1, num2 }: { num1: number, num2: number }) => {
-    return num1 * num2
-}, true)
-```
-
-**Client <-> Server**
-```ts
-// Sender
-const result = net.emitRemote('multiply', { num1: 2, num2: 5 }, true)
-print(result)
-```
-
 ## Important Notice
-**I did not test LuaU so there is a might be a issue on that**
+**I did not test examples that specified on here so there is a might be a issue on that**
