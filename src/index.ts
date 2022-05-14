@@ -51,7 +51,7 @@ export default class Net {
                         task.spawn(() => {
                             const value = listener(options)
                             if (returned) { return }
-                            if (value) { returned = true }
+                            if (value) { returned = true } else { return }
                             if (!uuid) { return }
                             this.RemoteEvent!.FireClient(player, this.EventWorkspace, RETURN_PREFIX, uuid, value)
                         })
@@ -86,7 +86,7 @@ export default class Net {
                         task.spawn(() => {
                             const value = listener(options)
                             if (returned) { return }
-                            if (value) { returned = true }
+                            if (value) { returned = true } else { return }
                             if (!uuid) { return }
                             this.RemoteEvent!.FireServer(this.EventWorkspace, RETURN_PREFIX, uuid, value)
                         })
@@ -120,7 +120,7 @@ export default class Net {
                     task.spawn(() => {
                         const value = listener(options)
                         if (returned) { return }
-                        if (value) { returned = true }
+                        if (value) { returned = true } else { return }
                         if (!uuid) { return }
                         this.BindableEvent!.Fire(this.EventWorkspace, RETURN_PREFIX, uuid, value)
                     })
