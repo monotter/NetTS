@@ -197,30 +197,30 @@ export default class Net {
 
 
     public emit(key: string, options: options = {}, remote: boolean = false, WaitForFirstReturn: boolean = false) {
-        task.wait()
-        if (WaitForFirstReturn) {
-            options._returnUUID = HttpService.GenerateGUID()
-            this.ReturnWaiters.set(options._returnUUID, { resolved: false })
-        }
+        task.spawn(() => {
+            task.wait()
+            if (WaitForFirstReturn) {
+                options._returnUUID = HttpService.GenerateGUID()
+                this.ReturnWaiters.set(options._returnUUID, { resolved: false })
+            }
 
 
-        if (remote) {
-            while (!this.RemoteEvent) { task.wait() }
-            if (IsServer) {
-                if (options._player) {
-                    this.RemoteEvent.FireClient(options._player, this.EventWorkspace, key, options)
+            if (remote) {
+                while (!this.RemoteEvent) { task.wait() }
+                if (IsServer) {
+                    if (options._player) {
+                        this.RemoteEvent.FireClient(options._player, this.EventWorkspace, key, options)
+                    } else {
+                        this.RemoteEvent.FireAllClients(this.EventWorkspace, key, options)
+                    }
                 } else {
-                    this.RemoteEvent.FireAllClients(this.EventWorkspace, key, options)
+                    this.RemoteEvent.FireServer(this.EventWorkspace, key, options)
                 }
             } else {
-                this.RemoteEvent.FireServer(this.EventWorkspace, key, options)
+                while (!this.BindableEvent) { task.wait() }
+                this.BindableEvent.Fire(this.EventWorkspace, key, options)
             }
-        } else {
-            while (!this.BindableEvent) { task.wait() }
-            this.BindableEvent.Fire(this.EventWorkspace, key, options)
-        }
-
-
+        })
         if (WaitForFirstReturn) {
             while (!this.ReturnWaiters.get(options._returnUUID)!.resolved) { task.wait() }
             return this.ReturnWaiters.get(options._returnUUID)!.value
