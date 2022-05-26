@@ -49,9 +49,9 @@ export default class Net {
                     listeners.forEach(({ listener, remote }) => {
                         if (!remote) { return }
                         task.spawn(() => {
-                            const value = listener(options)
+                            const value = listener(options) as defined
                             if (returned) { return }
-                            if (value) { returned = true } else { return }
+                            if (value !== undefined) { returned = true } else { return }
                             if (!uuid) { return }
                             this.RemoteEvent!.FireClient(player, this.EventWorkspace, RETURN_PREFIX, uuid, value)
                         })
@@ -84,9 +84,9 @@ export default class Net {
                     listeners.forEach(({ listener, remote }) => {
                         if (!remote) { return }
                         task.spawn(() => {
-                            const value = listener(options)
+                            const value = listener(options) as defined
                             if (returned) { return }
-                            if (value) { returned = true } else { return }
+                            if (value !== undefined) { returned = true } else { return }
                             if (!uuid) { return }
                             this.RemoteEvent!.FireServer(this.EventWorkspace, RETURN_PREFIX, uuid, value)
                         })
@@ -118,9 +118,9 @@ export default class Net {
                 listeners.forEach(({ listener, remote }) => {
                     if (remote) { return }
                     task.spawn(() => {
-                        const value = listener(options)
+                        const value = listener(options) as defined
                         if (returned) { return }
-                        if (value) { returned = true } else { return }
+                        if (value !== undefined) { returned = true } else { return }
                         if (!uuid) { return }
                         this.BindableEvent!.Fire(this.EventWorkspace, RETURN_PREFIX, uuid, value)
                     })
