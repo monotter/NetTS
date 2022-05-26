@@ -204,7 +204,6 @@ export default class Net {
                 this.ReturnWaiters.set(options._returnUUID, { resolved: false })
             }
 
-
             if (remote) {
                 while (!this.RemoteEvent) { task.wait() }
                 if (IsServer) {
@@ -222,8 +221,10 @@ export default class Net {
             }
         })
         if (WaitForFirstReturn) {
-            while (!this.ReturnWaiters.get(options._returnUUID)!.resolved) { task.wait() }
-            return this.ReturnWaiters.get(options._returnUUID)!.value
+            while (!options._returnUUID || !this.ReturnWaiters.get(options._returnUUID) || !this.ReturnWaiters.get(options._returnUUID)!.resolved) { task.wait() }
+            const value = this.ReturnWaiters.get(options._returnUUID)!.value
+            this.ReturnWaiters.delete(options._returnUUID)
+            return value
         }
     }
 }
