@@ -1,10 +1,21 @@
 {
-    "name": "wwww",
+    "name": "netts",
+    "globIgnorePaths": [
+        "**/package.json",
+        "**/tsconfig.json"
+    ],
     "tree": {
         "$className": "DataModel",
         "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
             "NetTS": {
-                "$path": "out"
+                "$path": "out/NetTS.lua",
+                "Include": {
+                    "$path": "include",
+                    "node_modules": {
+                        "$path": "node_modules/@rbxts"
+                    }
+                }
             }
         }
     }
