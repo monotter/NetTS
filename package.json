@@ -12,7 +12,7 @@
   "author": "",
   "homepage": "https://github.com/monotter/NetTS",
   "license": "ISC",
-  "types": "out/index.d.ts",
+  "types": "out/NetTS.d.ts",
   "files": [
     "out"
   ],
