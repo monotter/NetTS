@@ -1,11 +1,7 @@
+import { ReplicatedStorage, HttpService, RunService } from "@rbxts/services"
+
 interface options { [key: string | number]: any, _player?: Player }
 type listener = (options?: any) => any
-
-
-const ReplicatedStorage = game.GetService('ReplicatedStorage')
-const HttpService = game.GetService('HttpService')
-const RunService = game.GetService('RunService')
-
 
 const IsServer = RunService.IsServer()
 const EVENT_NAME = 'NetTS_Connection'
@@ -138,13 +134,12 @@ export default class Net {
         this.TempClinet = false
         let EventFolder = ReplicatedStorage.FindFirstChild(EVENT_NAME)
         if (EventFolder) {
-            if (EventFolder.GetAttribute('IsServer')) {
-                let RemoteEvent = EventFolder.WaitForChild('RemoteEvent') as RemoteEvent
-                let BindableEvent = EventFolder.WaitForChild('BindableEvent') as BindableEvent
-                this.RemoteEvent = RemoteEvent
-                this.BindableEvent = BindableEvent
-                this.reconnect()
-            } else {
+            let RemoteEvent = EventFolder.WaitForChild('RemoteEvent') as RemoteEvent
+            let BindableEvent = EventFolder.WaitForChild('BindableEvent') as BindableEvent
+            this.RemoteEvent = RemoteEvent
+            this.BindableEvent = BindableEvent
+            this.reconnect()
+            if (!EventFolder.GetAttribute('IsServer')) {
                 this.TempClinet = true
             }
         } else {
