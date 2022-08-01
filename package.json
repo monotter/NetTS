@@ -2,7 +2,7 @@
   "name": "@rbxts/net-ts",
   "version": "2.1.7",
   "description": "",
-  "main": "out/init.lua",
+  "main": "out/NetTS.lua",
   "scripts": {
     "build": "rbxtsc",
     "watch": "rbxtsc -w",
