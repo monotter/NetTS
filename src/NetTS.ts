@@ -1,7 +1,7 @@
 import { ReplicatedStorage, HttpService, RunService } from "@rbxts/services"
 
-interface options { [key: string | number]: any, _player?: Player }
-type listener = (options?: any) => any
+export interface options { [key: string | number]: any, _player?: Player }
+export type listener = (options?: any) => any
 
 const IsServer = RunService.IsServer()
 const EVENT_NAME = 'NetTS_Connection'
